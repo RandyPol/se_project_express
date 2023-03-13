@@ -3,12 +3,10 @@ const router = require('express').Router()
 // Import the routes
 const userRoutes = require('./users')
 const clothingItemRoutes = require('./clothingItems')
-const likeRoutes = require('./likes')
 
 // Implement the routes
 router.use('/users', userRoutes)
-router.use('/clothingItems', clothingItemRoutes)
-router.use('/items', likeRoutes)
+router.use('/items', clothingItemRoutes)
 
 // Non-existent resources
 router.use((req, res) => {
