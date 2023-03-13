@@ -1,0 +1,22 @@
+{
+  "name": "se_project_express",
+  "version": "1.0.0",
+  "description": "Creating the server for the WTWR application.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RandyPol/se_project_express.git"
+  },
+  "author": "RandyPol",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RandyPol/se_project_express/issues"
+  },
+  "homepage": "https://github.com/RandyPol/se_project_express#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
