@@ -2,8 +2,9 @@
   "name": "se_project_express",
   "version": "1.0.0",
   "description": "Creating the server for the WTWR application.",
-  "main": "index.js",
+  "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "npx eslint ."
   },
