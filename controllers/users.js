@@ -3,7 +3,7 @@ const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR } = require('../utils/errors')
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((users) => res.send({ data: users }))
+    .then((users) => res.send(users))
     .catch((err) => res.status(500).send({ message: err.message }))
 }
 
@@ -15,7 +15,7 @@ module.exports.getUser = (req, res) => {
       error.statusCode = NOT_FOUND
       throw error
     })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Invalid user id' })
@@ -32,6 +32,6 @@ module.exports.getUser = (req, res) => {
 module.exports.createUser = (req, res) => {
   const { name, avatar } = req.body
   User.create({ name, avatar })
-    .then((user) => res.send({ data: user }))
+    .then((user) => res.send(user))
     .catch((err) => res.status(500).send({ message: err.message }))
 }
