@@ -3,7 +3,7 @@ const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR } = require('../utils/errors')
 
 module.exports.getClothingItems = (req, res) => {
   ClothingItem.find({})
-    .then((clothingItems) => res.send({ data: clothingItems }))
+    .then((clothingItems) => res.send(clothingItems))
     .catch((err) => res.status(500).send({ message: err.message }))
 }
 
@@ -11,13 +11,13 @@ module.exports.createClothingItem = (req, res) => {
   const { _id } = req.user
   const { name, weather, imageUrl } = req.body
   ClothingItem.create({ name, weather, imageUrl, owner: _id })
-    .then((clothingItem) => res.send({ data: clothingItem }))
+    .then((clothingItem) => res.send(clothingItem))
     .catch((err) => res.status(500).send({ message: err.message }))
 }
 
 module.exports.deleteClothingItem = (req, res) => {
-  const { clothingItemId } = req.params
-  ClothingItem.findByIdAndRemove(clothingItemId)
+  const { itemId } = req.params
+  ClothingItem.findByIdAndRemove(itemId)
     .orFail(() => {
       const error = new Error('Clothing ID not found')
       error.statusCode = NOT_FOUND
