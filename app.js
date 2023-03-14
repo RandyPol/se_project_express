@@ -3,6 +3,8 @@ const express = require('express')
 const mongoose = require('mongoose')
 // eslint-disable-next-line import/no-extraneous-dependencies
 const morgan = require('morgan')
+// eslint-disable-next-line import/no-extraneous-dependencies
+const rateLimit = require('express-rate-limit')
 const routes = require('./routes')
 
 const { PORT = 3001 } = process.env
@@ -10,6 +12,13 @@ const app = express()
 
 mongoose.connect('mongodb://localhost:27017/weather_clothing_db')
 
+// Seting up the rate limiting middleware
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 100, // limit each IP to 100 requests per windowMs
+})
+
+app.use(limiter)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
