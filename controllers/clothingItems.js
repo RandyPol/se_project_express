@@ -3,18 +3,40 @@ const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR } = require('../utils/errors')
 
 module.exports.getClothingItems = (req, res) => {
   ClothingItem.find({})
-    .then((clothingItems) => res.send(clothingItems))
-    .catch((err) => res.status(500).send({ message: err.message }))
+    .then((clothingItems) => {
+      res.send(clothingItems)
+    })
+    .catch((err) => res.status(SERVER_ERROR).send({ message: err.message }))
 }
 
-module.exports.createClothingItem = (req, res) => {
+module.exports.createClothingItem = async (req, res) => {
   const { _id } = req.user
   const { name, weather, imageUrl } = req.body
-  ClothingItem.create({ name, weather, imageUrl, owner: _id })
-    .then((clothingItem) => res.send(clothingItem))
-    .catch((err) => res.status(500).send({ message: err.message }))
+  try {
+    const clothingItem = await ClothingItem.create({
+      name,
+      weather,
+      imageUrl,
+      owner: _id,
+    })
+    res.status(201).send(clothingItem)
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      res.status(BAD_REQUEST).send({ message: error.message })
+    } else if (error.statusCode === NOT_FOUND) {
+      res.status(NOT_FOUND).send({ message: error.message })
+    } else {
+      res
+        .status(SERVER_ERROR)
+        .send({ message: error.message || 'internal server error' })
+    }
+  }
 }
 
+/**
+ *
+ * Below will be the controllers for individual clothing items functionality
+ */
 module.exports.deleteClothingItem = (req, res) => {
   const { itemId } = req.params
   ClothingItem.findByIdAndRemove(itemId)
@@ -24,15 +46,12 @@ module.exports.deleteClothingItem = (req, res) => {
       throw error
     })
     .then((clothingItem) => {
-      if (!clothingItem) {
-        return res.status(404).send({ message: 'Clothing item not found' })
-      }
-      return res.send({ data: clothingItem })
+      res.send(clothingItem)
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Invalid clothes id' })
-      } else if (err.statusCode === 404) {
+      } else if (err.statusCode === NOT_FOUND) {
         res.status(NOT_FOUND).send({ message: err.message })
       } else {
         res
@@ -56,12 +75,12 @@ module.exports.likeItem = (req, res) => {
       throw error
     })
     .then((clothingItem) => {
-      res.send({ data: clothingItem })
+      res.send(clothingItem)
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Invalid clothes id' })
-      } else if (err.statusCode === 404) {
+      } else if (err.statusCode === NOT_FOUND) {
         res.status(NOT_FOUND).send({ message: err.message })
       } else {
         res
@@ -85,12 +104,12 @@ module.exports.dislikeItem = (req, res) => {
       throw error
     })
     .then((clothingItem) => {
-      res.send({ data: clothingItem })
+      res.send(clothingItem)
     })
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(BAD_REQUEST).send({ message: 'Invalid clothes id' })
-      } else if (err.statusCode === 404) {
+      } else if (err.statusCode === NOT_FOUND) {
         res.status(NOT_FOUND).send({ message: err.message })
       } else {
         res
