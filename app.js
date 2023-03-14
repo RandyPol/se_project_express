@@ -5,6 +5,8 @@ const mongoose = require('mongoose')
 const morgan = require('morgan')
 // eslint-disable-next-line import/no-extraneous-dependencies
 const rateLimit = require('express-rate-limit')
+// eslint-disable-next-line import/no-extraneous-dependencies
+const helmet = require('helmet')
 const routes = require('./routes')
 
 const { PORT = 3001 } = process.env
@@ -18,6 +20,7 @@ const limiter = rateLimit({
   max: 100, // limit each IP to 100 requests per windowMs
 })
 
+app.use(helmet())
 app.use(limiter)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
