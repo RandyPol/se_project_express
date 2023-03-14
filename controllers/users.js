@@ -7,7 +7,9 @@ const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR } = require('../utils/errors')
 module.exports.getUsers = (req, res) => {
   User.find({})
     .then((users) => res.send(users))
-    .catch((err) => res.status(SERVER_ERROR).send({ message: err.message }))
+    .catch(() =>
+      res.status(SERVER_ERROR).send({ message: 'Internal server error' })
+    )
 }
 
 module.exports.getUser = (req, res) => {
@@ -31,9 +33,7 @@ module.exports.getUser = (req, res) => {
       } else if (err.statusCode === NOT_FOUND) {
         res.status(NOT_FOUND).send({ message: err.message })
       } else {
-        res
-          .status(SERVER_ERROR)
-          .send({ message: err.message || 'internal server error' })
+        res.status(SERVER_ERROR).send({ message: 'Internal server error' })
       }
     })
 }
@@ -45,13 +45,11 @@ module.exports.createUser = async (req, res) => {
     res.send(user)
   } catch (error) {
     if (error.name === 'ValidationError') {
-      res.status(BAD_REQUEST).send({ message: error.message })
+      res.status(BAD_REQUEST).send({ message: 'Invalid data' })
     } else if (error.statusCode === NOT_FOUND) {
       res.status(NOT_FOUND).send({ message: error.message })
     } else {
-      res
-        .status(SERVER_ERROR)
-        .send({ message: error.message || 'internal server error' })
+      res.status(SERVER_ERROR).send({ message: 'Internal server error' })
     }
   }
 }
