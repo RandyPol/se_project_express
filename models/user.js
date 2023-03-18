@@ -2,6 +2,8 @@
 const mongoose = require('mongoose')
 // eslint-disable-next-line import/no-extraneous-dependencies
 const validator = require('validator')
+// eslint-disable-next-line import/no-extraneous-dependencies
+const bcrypt = require('bcryptjs')
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -37,6 +39,23 @@ const userSchema = new mongoose.Schema({
   },
 })
 
+userSchema.statics.findUserByCredentials = function findUserByCredentials(
+  email,
+  password
+) {
+  return this.findOne({ email }).then((user) => {
+    if (!user) {
+      return Promise.reject(new Error('Incorrect password or email'))
+    }
+
+    return bcrypt.compare(password, user.password).then((matched) => {
+      if (!matched) {
+        return Promise.reject(new Error('Incorrect password or email'))
+      }
+      return user
+    })
+  })
+}
 const User = mongoose.model('user', userSchema)
 
 module.exports = User
