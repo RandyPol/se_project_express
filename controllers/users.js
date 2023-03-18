@@ -92,3 +92,14 @@ module.exports.login = async (req, res) => {
     }
   }
 }
+
+module.exports.getCurrentUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id)
+    res.send(user)
+  } catch (error) {
+    res
+      .status(errorCode.SERVER_ERROR)
+      .send({ message: 'Internal server error' })
+  }
+}
