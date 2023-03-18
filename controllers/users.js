@@ -18,32 +18,32 @@ module.exports.getUsers = (req, res) => {
     )
 }
 
-module.exports.getUser = (req, res) => {
+module.exports.getUser = async (req, res) => {
   const { userId } = req.params
 
-  User.findById(userId)
-    .orFail(() => {
+  try {
+    const user = await User.findById(userId).orFail(() => {
       if (!ObjectId.isValid(userId)) {
         const error = new Error('Invalid user id')
         error.statusCode = errorCode.BAD_REQUEST
         throw error
       }
-      const error = new Error('User ID not found')
+      const error = new Error('User not found')
       error.statusCode = errorCode.NOT_FOUND
       throw error
     })
-    .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.statusCode === errorCode.BAD_REQUEST) {
-        res.status(errorCode.BAD_REQUEST).send({ message: err.message })
-      } else if (err.statusCode === errorCode.NOT_FOUND) {
-        res.status(errorCode.NOT_FOUND).send({ message: err.message })
-      } else {
-        res
-          .status(errorCode.SERVER_ERROR)
-          .send({ message: 'Internal server error' })
-      }
-    })
+    res.send(user)
+  } catch (err) {
+    if (err.statusCode === errorCode.BAD_REQUEST) {
+      res.status(errorCode.BAD_REQUEST).send({ message: err.message })
+    } else if (err.statusCode === errorCode.NOT_FOUND) {
+      res.status(errorCode.NOT_FOUND).send({ message: err.message })
+    } else {
+      res
+        .status(errorCode.SERVER_ERROR)
+        .send({ message: 'Internal server error' })
+    }
+  }
 }
 
 module.exports.createUser = async (req, res) => {
