@@ -2,8 +2,10 @@
 const { ObjectId } = require('mongoose').Types
 // eslint-disable-next-line import/no-extraneous-dependencies
 const bcrypt = require('bcryptjs')
+// eslint-disable-next-line import/no-extraneous-dependencies
+const jwt = require('jsonwebtoken')
 const User = require('../models/user')
-
+const { JWT_SECRET } = require('../utils/config')
 const errorCode = require('../utils/errors')
 
 module.exports.getUsers = (req, res) => {
@@ -59,6 +61,27 @@ module.exports.createUser = async (req, res) => {
       res
         .status(errorCode.CONFLICT_DATA)
         .send({ message: 'Email already exist' })
+    } else {
+      res
+        .status(errorCode.SERVER_ERROR)
+        .send({ message: 'Internal server error' })
+    }
+  }
+}
+
+module.exports.login = async (req, res) => {
+  const { email, password } = req.body
+  try {
+    const user = await User.findUserByCredentials(email, password)
+    const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
+      expiresIn: '7d',
+    })
+    res.send({
+      token,
+    })
+  } catch (error) {
+    if (error.name === 'AuthenticationError') {
+      res.status(errorCode.UNAUTHORIZED_ERROR).send({ message: error.message })
     } else {
       res
         .status(errorCode.SERVER_ERROR)

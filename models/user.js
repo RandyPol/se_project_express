@@ -5,6 +5,8 @@ const validator = require('validator')
 // eslint-disable-next-line import/no-extraneous-dependencies
 const bcrypt = require('bcryptjs')
 
+const { AuthentificationError } = require('../utils/errors')
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -44,13 +46,14 @@ userSchema.statics.findUserByCredentials = function findUserByCredentials(
   password
 ) {
   return this.findOne({ email }).then((user) => {
+    // Email is not found error handling
     if (!user) {
-      return Promise.reject(new Error('Incorrect password or email'))
+      return Promise.reject(new AuthentificationError())
     }
-
+    // Password does not match error handling
     return bcrypt.compare(password, user.password).then((matched) => {
       if (!matched) {
-        return Promise.reject(new Error('Incorrect password or email'))
+        return Promise.reject(new AuthentificationError())
       }
       return user
     })
