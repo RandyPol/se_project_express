@@ -51,7 +51,10 @@ module.exports.createUser = async (req, res) => {
     const { name, avatar, email, password } = req.body
     const hash = await bcrypt.hash(password, 10)
     const user = await User.create({ name, avatar, email, password: hash })
-    res.send(user)
+    res.status(201).send({
+      _id: user._id,
+      email: user.email,
+    })
   } catch (error) {
     if (error.name === 'ValidationError') {
       res.status(errorCode.BAD_REQUEST).send({ message: 'Invalid data' })
