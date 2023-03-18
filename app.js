@@ -28,14 +28,6 @@ app.use(express.urlencoded({ extended: true }))
 // Log all requests to the console
 app.use(morgan('tiny'))
 
-// Add a temporary user middleware to all requests
-app.use((req, res, next) => {
-  req.user = {
-    _id: '640ec52391403239e214b720',
-  }
-  next()
-})
-
 // Use the routes
 app.use('/', routes)
 
