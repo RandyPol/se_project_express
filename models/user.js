@@ -38,6 +38,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
     minlength: 8,
+    select: false,
   },
 })
 
@@ -45,19 +46,21 @@ userSchema.statics.findUserByCredentials = function findUserByCredentials(
   email,
   password
 ) {
-  return this.findOne({ email }).then((user) => {
-    // Email is not found error handling
-    if (!user) {
-      return Promise.reject(new AuthenticationError())
-    }
-    // Password does not match error handling
-    return bcrypt.compare(password, user.password).then((matched) => {
-      if (!matched) {
+  return this.findOne({ email })
+    .select('+password')
+    .then((user) => {
+      // Email is not found error handling
+      if (!user) {
         return Promise.reject(new AuthenticationError())
       }
-      return user
+      // Password does not match error handling
+      return bcrypt.compare(password, user.password).then((matched) => {
+        if (!matched) {
+          return Promise.reject(new AuthenticationError())
+        }
+        return user
+      })
     })
-  })
 }
 const User = mongoose.model('user', userSchema)
 
