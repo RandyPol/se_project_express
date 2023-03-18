@@ -6,6 +6,8 @@ const morgan = require('morgan')
 // eslint-disable-next-line import/no-extraneous-dependencies
 const rateLimit = require('express-rate-limit')
 // eslint-disable-next-line import/no-extraneous-dependencies
+const cors = require('cors')
+// eslint-disable-next-line import/no-extraneous-dependencies
 const helmet = require('helmet')
 const routes = require('./routes')
 
@@ -24,7 +26,7 @@ app.use(helmet())
 app.use(limiter)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-
+app.use(cors())
 // Log all requests to the console
 app.use(morgan('tiny'))
 
