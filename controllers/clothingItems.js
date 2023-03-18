@@ -1,5 +1,5 @@
 const ClothingItem = require('../models/clothingItem')
-const { BAD_REQUEST, NOT_FOUND, SERVER_ERROR } = require('../utils/errors')
+const errorCode = require('../utils/errors')
 
 module.exports.getClothingItems = (req, res) => {
   ClothingItem.find({})
@@ -7,7 +7,9 @@ module.exports.getClothingItems = (req, res) => {
       res.send(clothingItems)
     })
     .catch(() =>
-      res.status(SERVER_ERROR).send({ message: 'Internal server error' })
+      res
+        .status(errorCode.SERVER_ERROR)
+        .send({ message: 'Internal server error' })
     )
 }
 
@@ -24,11 +26,13 @@ module.exports.createClothingItem = async (req, res) => {
     res.status(201).send(clothingItem)
   } catch (error) {
     if (error.name === 'ValidationError') {
-      res.status(BAD_REQUEST).send({ message: 'Invalid data' })
-    } else if (error.statusCode === NOT_FOUND) {
-      res.status(NOT_FOUND).send({ message: error.message })
+      res.status(errorCode.BAD_REQUEST).send({ message: 'Invalid data' })
+    } else if (error.statusCode === errorCode.NOT_FOUND) {
+      res.status(errorCode.NOT_FOUND).send({ message: error.message })
     } else {
-      res.status(SERVER_ERROR).send({ message: 'Internal server error' })
+      res
+        .status(errorCode.SERVER_ERROR)
+        .send({ message: 'Internal server error' })
     }
   }
 }
@@ -37,26 +41,36 @@ module.exports.createClothingItem = async (req, res) => {
  *
  * Below will be the controllers for individual clothing items functionality
  */
-module.exports.deleteClothingItem = (req, res) => {
+module.exports.deleteClothingItem = async (req, res) => {
   const { itemId } = req.params
-  ClothingItem.findByIdAndRemove(itemId)
-    .orFail(() => {
+  const { _id } = req.user
+  try {
+    const clothingItem = await ClothingItem.findById(itemId).orFail(() => {
       const error = new Error('Clothing ID not found')
-      error.statusCode = NOT_FOUND
+      error.statusCode = errorCode.NOT_FOUND
       throw error
     })
-    .then((clothingItem) => {
-      res.send(clothingItem)
-    })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Invalid clothes id' })
-      } else if (err.statusCode === NOT_FOUND) {
-        res.status(NOT_FOUND).send({ message: err.message })
-      } else {
-        res.status(SERVER_ERROR).send({ message: 'Internal server error' })
-      }
-    })
+
+    if (clothingItem.owner.toString() !== _id) {
+      throw new errorCode.ForbiddenError()
+    }
+
+    await clothingItem.findByIdAndRemove(itemId)
+
+    res.status(204).send(clothingItem)
+  } catch (err) {
+    if (err.name === 'CastError') {
+      res.status(errorCode.BAD_REQUEST).send({ message: 'Invalid clothes id' })
+    } else if (err.statusCode === errorCode.NOT_FOUND) {
+      res.status(errorCode.NOT_FOUND).send({ message: err.message })
+    } else if (err.statusCode === errorCode.UNAUTHORIZED_ERROR) {
+      res.status(errorCode.UNAUTHORIZED_ERROR).send({ message: err.message })
+    } else {
+      res
+        .status(errorCode.SERVER_ERROR)
+        .send({ message: 'Internal server error' })
+    }
+  }
 }
 
 module.exports.likeItem = (req, res) => {
@@ -69,7 +83,7 @@ module.exports.likeItem = (req, res) => {
   )
     .orFail(() => {
       const error = new Error('Clothing ID not found')
-      error.statusCode = NOT_FOUND
+      error.statusCode = errorCode.NOT_FOUND
       throw error
     })
     .then((clothingItem) => {
@@ -77,11 +91,15 @@ module.exports.likeItem = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Invalid clothes id' })
-      } else if (err.statusCode === NOT_FOUND) {
-        res.status(NOT_FOUND).send({ message: err.message })
+        res
+          .status(errorCode.BAD_REQUEST)
+          .send({ message: 'Invalid clothes id' })
+      } else if (err.statusCode === errorCode.NOT_FOUND) {
+        res.status(errorCode.NOT_FOUND).send({ message: err.message })
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Internal server error' })
+        res
+          .status(errorCode.SERVER_ERROR)
+          .send({ message: 'Internal server error' })
       }
     })
 }
@@ -96,7 +114,7 @@ module.exports.dislikeItem = (req, res) => {
   )
     .orFail(() => {
       const error = new Error('Clothing ID not found')
-      error.statusCode = NOT_FOUND
+      error.statusCode = errorCode.NOT_FOUND
       throw error
     })
     .then((clothingItem) => {
@@ -104,11 +122,15 @@ module.exports.dislikeItem = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(BAD_REQUEST).send({ message: 'Invalid clothes id' })
-      } else if (err.statusCode === NOT_FOUND) {
-        res.status(NOT_FOUND).send({ message: err.message })
+        res
+          .status(errorCode.BAD_REQUEST)
+          .send({ message: 'Invalid clothes id' })
+      } else if (err.statusCode === errorCode.NOT_FOUND) {
+        res.status(errorCode.NOT_FOUND).send({ message: err.message })
       } else {
-        res.status(SERVER_ERROR).send({ message: 'Internal server error' })
+        res
+          .status(errorCode.SERVER_ERROR)
+          .send({ message: 'Internal server error' })
       }
     })
 }

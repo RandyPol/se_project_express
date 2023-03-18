@@ -1,8 +1,17 @@
 // Custom error classes
+// eslint-disable-next-line max-classes-per-file
 class AuthenticationError extends Error {
   constructor(message = 'Incorrect password or email') {
     super(message)
     this.name = 'AuthenticationError'
+    this.statusCode = 401
+  }
+}
+
+class ForbiddenError extends Error {
+  constructor(message = 'Forbidden Action') {
+    super(message)
+    this.name = 'ForbiddenError'
     this.statusCode = 401
   }
 }
@@ -17,3 +26,4 @@ module.exports = {
 }
 
 module.exports.AuthenticationError = AuthenticationError
+module.exports.AuthenticationError = ForbiddenError
