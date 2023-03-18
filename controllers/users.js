@@ -8,14 +8,15 @@ const User = require('../models/user')
 const { JWT_SECRET } = require('../utils/config')
 const errorCode = require('../utils/errors')
 
-module.exports.getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.send(users))
-    .catch(() =>
-      res
-        .status(errorCode.SERVER_ERROR)
-        .send({ message: 'Internal server error' })
-    )
+module.exports.getUsers = async (req, res) => {
+  try {
+    const users = await User.find({})
+    res.send(users)
+  } catch (err) {
+    res
+      .status(errorCode.SERVER_ERROR)
+      .send({ message: 'Internal server error' })
+  }
 }
 
 module.exports.getUser = async (req, res) => {
