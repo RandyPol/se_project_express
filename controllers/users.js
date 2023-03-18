@@ -55,12 +55,12 @@ module.exports.createUser = async (req, res) => {
       _id: user._id,
       email: user.email,
     })
-  } catch (error) {
-    if (error.name === 'ValidationError') {
+  } catch (err) {
+    if (err.name === 'ValidationError') {
       res.status(errorCode.BAD_REQUEST).send({ message: 'Invalid data' })
-    } else if (error.statusCode === errorCode.NOT_FOUND) {
-      res.status(errorCode.NOT_FOUND).send({ message: error.message })
-    } else if (error.code === errorCode.DUPLICATE_ERROR) {
+    } else if (err.statusCode === errorCode.NOT_FOUND) {
+      res.status(errorCode.NOT_FOUND).send({ message: err.message })
+    } else if (err.code === errorCode.DUPLICATE_ERROR) {
       res
         .status(errorCode.CONFLICT_DATA)
         .send({ message: 'Email already exist' })
@@ -101,5 +101,34 @@ module.exports.getCurrentUser = async (req, res) => {
     res
       .status(errorCode.SERVER_ERROR)
       .send({ message: 'Internal server error' })
+  }
+}
+
+module.exports.updateUser = async (req, res) => {
+  const { userId } = req.params
+  const updateUserData = req.body
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(userId, updateUserData, {
+      new: true,
+      runValidators: true,
+    })
+
+    if (!updatedUser) {
+      const error = new Error('User is not found')
+      error.statusCode = errorCode.NOT_FOUND
+      throw error
+    }
+    res.send(updatedUser)
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      res.status(errorCode.BAD_REQUEST).send({ message: 'Invalid data' })
+    } else if (err.statusCode === errorCode.NOT_FOUND) {
+      res.status(errorCode.NOT_FOUND).send({ message: err.message })
+    } else {
+      res
+        .status(errorCode.SERVER_ERROR)
+        .send({ message: 'Internal server error' })
+    }
   }
 }
