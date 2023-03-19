@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
 
-const { AuthenticationError } = require('../utils/errors')
+const errorCode = require('../utils/errors')
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -39,25 +39,26 @@ const userSchema = new mongoose.Schema({
   },
 })
 
-userSchema.statics.findUserByCredentials = function findUserByCredentials(
+userSchema.statics.findUserByCredentials = async function findUserByCredentials(
   email,
   password
 ) {
-  return this.findOne({ email })
-    .select('+password')
-    .then((user) => {
-      // Email is not found error handling
-      if (!user) {
-        return Promise.reject(new AuthenticationError())
-      }
-      // Password does not match error handling
-      return bcrypt.compare(password, user.password).then((matched) => {
-        if (!matched) {
-          return Promise.reject(new AuthenticationError())
-        }
-        return user
-      })
-    })
+  const user = await this.findOne({ email }).select('+password')
+  if (!user) {
+    const error = new Error('Incorrect password or email')
+    error.statusCode = errorCode.UNAUTHORIZED_ERROR
+    error.name = 'AuthenticationError'
+    throw error
+  }
+  const matched = await bcrypt.compare(password, user.password)
+  if (!matched) {
+    const error = new Error('Incorrect password or email')
+    error.statusCode = errorCode.UNAUTHORIZED_ERROR
+    error.name = 'AuthenticationError'
+    throw error
+  }
+
+  return user
 }
 const User = mongoose.model('user', userSchema)
 
