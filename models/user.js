@@ -1,8 +1,5 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 const mongoose = require('mongoose')
-// eslint-disable-next-line import/no-extraneous-dependencies
 const validator = require('validator')
-// eslint-disable-next-line import/no-extraneous-dependencies
 const bcrypt = require('bcryptjs')
 
 const { AuthenticationError } = require('../utils/errors')

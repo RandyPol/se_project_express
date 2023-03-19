@@ -1,13 +1,8 @@
 const express = require('express')
-// eslint-disable-next-line import/no-extraneous-dependencies
 const mongoose = require('mongoose')
-// eslint-disable-next-line import/no-extraneous-dependencies
 const morgan = require('morgan')
-// eslint-disable-next-line import/no-extraneous-dependencies
 const rateLimit = require('express-rate-limit')
-// eslint-disable-next-line import/no-extraneous-dependencies
 const cors = require('cors')
-// eslint-disable-next-line import/no-extraneous-dependencies
 const helmet = require('helmet')
 const routes = require('./routes')
 
