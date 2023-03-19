@@ -56,11 +56,21 @@ module.exports.login = async (req, res) => {
 module.exports.getCurrentUser = async (req, res) => {
   try {
     const user = await User.findById(req.user._id)
-    res.send(user)
-  } catch (error) {
-    res
-      .status(errorCode.SERVER_ERROR)
-      .send({ message: 'Internal server error' })
+    if (!user) {
+      const error = new Error('User is not found')
+      error.statusCode = errorCode.NOT_FOUND
+      throw error
+    } else {
+      res.send(user)
+    }
+  } catch (err) {
+    if (err.statusCode === errorCode.NOT_FOUND) {
+      res.status(errorCode.NOT_FOUND).send({ message: err.message })
+    } else {
+      res
+        .status(errorCode.SERVER_ERROR)
+        .send({ message: 'Internal server error' })
+    }
   }
 }
 
