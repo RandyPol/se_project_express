@@ -1,51 +1,10 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
-const { ObjectId } = require('mongoose').Types
-// eslint-disable-next-line import/no-extraneous-dependencies
 const bcrypt = require('bcryptjs')
 // eslint-disable-next-line import/no-extraneous-dependencies
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 const { JWT_SECRET } = require('../utils/config')
 const errorCode = require('../utils/errors')
-
-module.exports.getUsers = async (req, res) => {
-  try {
-    const users = await User.find({})
-    res.send(users)
-  } catch (err) {
-    res
-      .status(errorCode.SERVER_ERROR)
-      .send({ message: 'Internal server error' })
-  }
-}
-
-module.exports.getUser = async (req, res) => {
-  const { userId } = req.params
-
-  try {
-    const user = await User.findById(userId).orFail(() => {
-      if (!ObjectId.isValid(userId)) {
-        const error = new Error('Invalid user id')
-        error.statusCode = errorCode.BAD_REQUEST
-        throw error
-      }
-      const error = new Error('User not found')
-      error.statusCode = errorCode.NOT_FOUND
-      throw error
-    })
-    res.send(user)
-  } catch (err) {
-    if (err.statusCode === errorCode.BAD_REQUEST) {
-      res.status(errorCode.BAD_REQUEST).send({ message: err.message })
-    } else if (err.statusCode === errorCode.NOT_FOUND) {
-      res.status(errorCode.NOT_FOUND).send({ message: err.message })
-    } else {
-      res
-        .status(errorCode.SERVER_ERROR)
-        .send({ message: 'Internal server error' })
-    }
-  }
-}
 
 module.exports.createUser = async (req, res) => {
   try {
@@ -54,6 +13,8 @@ module.exports.createUser = async (req, res) => {
     const user = await User.create({ name, avatar, email, password: hash })
     res.status(201).send({
       _id: user._id,
+      name: user.name,
+      avatar: user.avatar,
       email: user.email,
     })
   } catch (err) {
