@@ -1,12 +1,12 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 const jwt = require('jsonwebtoken')
-const errorCodes = require('../utils/errors')
+const errorCode = require('../utils/errors')
 
 const { JWT_SECRET } = require('../utils/config')
 
 const handleAuthError = (res) => {
   res
-    .status(errorCodes.UNAUTHORIZED_ERROR)
+    .status(errorCode.UNAUTHORIZED_ERROR)
     .send({ message: 'Authorization Error' })
 }
 
