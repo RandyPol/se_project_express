@@ -4,6 +4,7 @@ logs
 npm-debug.log*
 output.txt
 .env
+playcode
 playCode.js
 # Dependency directory
 node_modules
