@@ -20,8 +20,6 @@ module.exports.createUser = async (req, res) => {
   } catch (err) {
     if (err.name === 'ValidationError') {
       res.status(errorCode.BAD_REQUEST).send({ message: 'Invalid data' })
-    } else if (err.statusCode === errorCode.NOT_FOUND) {
-      res.status(errorCode.NOT_FOUND).send({ message: err.message })
     } else if (err.code === errorCode.DUPLICATE_ERROR) {
       res
         .status(errorCode.CONFLICT_DATA)
