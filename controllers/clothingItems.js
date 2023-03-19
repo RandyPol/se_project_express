@@ -27,8 +27,6 @@ module.exports.createClothingItem = async (req, res) => {
   } catch (error) {
     if (error.name === 'ValidationError') {
       res.status(errorCode.BAD_REQUEST).send({ message: 'Invalid data' })
-    } else if (error.statusCode === errorCode.NOT_FOUND) {
-      res.status(errorCode.NOT_FOUND).send({ message: error.message })
     } else {
       res
         .status(errorCode.SERVER_ERROR)
