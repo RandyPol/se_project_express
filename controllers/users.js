@@ -75,14 +75,19 @@ module.exports.getCurrentUser = async (req, res) => {
 }
 
 module.exports.updateUser = async (req, res) => {
-  const { userId } = req.params
-  const updateUserData = req.body
+  const { _id } = req.user
+  // Update user data
+  const { name, avatar } = req.body
 
   try {
-    const updatedUser = await User.findByIdAndUpdate(userId, updateUserData, {
-      new: true,
-      runValidators: true,
-    })
+    const updatedUser = await User.findByIdAndUpdate(
+      _id,
+      { name, avatar },
+      {
+        new: true,
+        runValidators: true,
+      }
+    )
 
     if (!updatedUser) {
       const error = new Error('User is not found')
