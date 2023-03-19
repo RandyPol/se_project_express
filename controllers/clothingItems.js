@@ -50,19 +50,21 @@ module.exports.deleteClothingItem = async (req, res) => {
     })
 
     if (clothingItem.owner.toString() !== _id) {
-      throw new errorCode.ForbiddenError()
+      const error = new Error('Forbidden Action')
+      error.statusCode = errorCode.FORBIDDEN_ERROR
+      throw error
     }
 
-    await clothingItem.findByIdAndRemove(itemId)
+    const deleteClothingItem = await ClothingItem.findByIdAndRemove(itemId)
 
-    res.status(204).send(clothingItem)
+    res.status(200).send(deleteClothingItem)
   } catch (err) {
     if (err.name === 'CastError') {
       res.status(errorCode.BAD_REQUEST).send({ message: 'Invalid clothes id' })
     } else if (err.statusCode === errorCode.NOT_FOUND) {
       res.status(errorCode.NOT_FOUND).send({ message: err.message })
-    } else if (err.statusCode === errorCode.UNAUTHORIZED_ERROR) {
-      res.status(errorCode.UNAUTHORIZED_ERROR).send({ message: err.message })
+    } else if (err.statusCode === errorCode.FORBIDDEN_ERROR) {
+      res.status(errorCode.FORBIDDEN_ERROR).send({ message: err.message })
     } else {
       res
         .status(errorCode.SERVER_ERROR)
