@@ -39,6 +39,7 @@ module.exports.login = async (req, res) => {
     })
     res.send({
       token,
+      user,
     })
   } catch (error) {
     if (error.name === 'AuthenticationError') {
