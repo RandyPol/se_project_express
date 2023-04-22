@@ -7,6 +7,7 @@ const helmet = require('helmet')
 const { errors } = require('celebrate')
 const routes = require('./routes')
 const errorHandler = require('./utils/errorHandler')
+const { requestLogger, errorLogger } = require('./middlewares/logger')
 
 const { PORT = 3001 } = process.env
 const app = express()
@@ -27,13 +28,19 @@ app.use(cors())
 // Log all requests to the console
 app.use(morgan('tiny'))
 
+// Log all requests to the request.log file
+app.use(requestLogger)
+
 // Use the routes
 app.use('/', routes)
+
+// Log all errors to the error.log file
+app.use(errorLogger)
 
 // Celebrate error handler
 app.use(errors())
 
-// Error handler
+// Centralized Error handler
 app.use(errorHandler)
 
 app.listen(PORT)
