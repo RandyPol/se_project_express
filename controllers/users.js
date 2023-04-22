@@ -30,33 +30,7 @@ module.exports.createUser = async (req, res, next) => {
   }
 }
 
-// module.exports.createUser = async (req, res) => {
-//   try {
-//     const { name, avatar, email, password } = req.body
-//     const hash = await bcrypt.hash(password, 10)
-//     const user = await User.create({ name, avatar, email, password: hash })
-//     res.status(201).send({
-//       _id: user._id,
-//       name: user.name,
-//       avatar: user.avatar,
-//       email: user.email,
-//     })
-//   } catch (err) {
-//     if (err.name === 'ValidationError') {
-//       res.status(errorCode.BAD_REQUEST).send({ message: 'Invalid data' })
-//     } else if (err.code === errorCode.DUPLICATE_ERROR) {
-//       res
-//         .status(errorCode.CONFLICT_DATA)
-//         .send({ message: 'Email already exist' })
-//     } else {
-//       res
-//         .status(errorCode.SERVER_ERROR)
-//         .send({ message: 'Internal server error' })
-//     }
-//   }
-// }
-
-module.exports.login = async (req, res) => {
+module.exports.login = async (req, res, next) => {
   const { email, password } = req.body
   try {
     const user = await User.findUserByCredentials(email, password)
@@ -69,11 +43,9 @@ module.exports.login = async (req, res) => {
     })
   } catch (error) {
     if (error.name === 'AuthenticationError') {
-      res.status(errorCode.UNAUTHORIZED_ERROR).send({ message: error.message })
+      next(new UnauthorizedError('Invalid email or password'))
     } else {
-      res
-        .status(errorCode.SERVER_ERROR)
-        .send({ message: 'Internal server error' })
+      next(new Error('Internal server error'))
     }
   }
 }
