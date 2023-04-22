@@ -13,27 +13,25 @@ module.exports.getClothingItems = async (req, res, next) => {
   }
 }
 
-// module.exports.createClothingItem = async (req, res) => {
-//   const { _id } = req.user
-//   const { name, weather, imageUrl } = req.body
-//   try {
-//     const clothingItem = await ClothingItem.create({
-//       name,
-//       weather,
-//       imageUrl,
-//       owner: _id,
-//     })
-//     res.status(201).send(clothingItem)
-//   } catch (error) {
-//     if (error.name === 'ValidationError') {
-//       res.status(errorCode.BAD_REQUEST).send({ message: 'Invalid data' })
-//     } else {
-//       res
-//         .status(errorCode.SERVER_ERROR)
-//         .send({ message: 'Internal server error' })
-//     }
-//   }
-// }
+module.exports.createClothingItem = async (req, res, next) => {
+  const { _id } = req.user
+  const { name, weather, imageUrl } = req.body
+  try {
+    const clothingItem = await ClothingItem.create({
+      name,
+      weather,
+      imageUrl,
+      owner: _id,
+    })
+    res.status(201).send(clothingItem)
+  } catch (error) {
+    if (error.name === 'ValidationError') {
+      next(new BadRequestError('Invalid data'))
+    } else {
+      next(new Error('Internal server error'))
+    }
+  }
+}
 
 // /**
 //  *
