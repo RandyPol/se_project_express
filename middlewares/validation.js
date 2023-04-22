@@ -66,3 +66,14 @@ module.exports.validateLoginBody = celebrate({
     }),
   }),
 })
+
+// User and clothing item IDs when they are accessed
+
+module.exports.validateId = celebrate({
+  params: Joi.object().keys({
+    id: Joi.string().hex().length(24).messages({
+      'string.hex': 'The "id" field must be a valid hexadecimal',
+      'string.length': 'The "id" field must be 24 characters long',
+    }),
+  }),
+})
