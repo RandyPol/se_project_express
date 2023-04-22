@@ -1,5 +1,5 @@
 const ClothingItem = require('../models/clothingItem')
-const errorCode = require('../utils/errors')
+const errorCode = require('../utils/errorsCode')
 
 module.exports.getClothingItems = (req, res) => {
   ClothingItem.find({})

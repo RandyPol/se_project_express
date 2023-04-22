@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken')
-const errorCode = require('../utils/errors')
+const errorCode = require('../utils/errorsCode')
 
 const { JWT_SECRET } = require('../utils/config')
 

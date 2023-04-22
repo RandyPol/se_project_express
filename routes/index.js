@@ -1,5 +1,5 @@
 const router = require('express').Router()
-const { NOT_FOUND } = require('../utils/errors')
+const { NOT_FOUND } = require('../utils/errorsCode')
 // Import the routes
 const userRoutes = require('./users')
 const clothingItemRoutes = require('./clothingItems')
