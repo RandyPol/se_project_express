@@ -61,36 +61,28 @@ module.exports.getCurrentUser = async (req, res, next) => {
   }
 }
 
-// module.exports.updateUser = async (req, res) => {
-//   const { _id } = req.user
-//   // Update user data
-//   const { name, avatar } = req.body
+module.exports.updateUser = async (req, res, next) => {
+  const { _id } = req.user
+  // Update user data
+  const { name, avatar } = req.body
 
-//   try {
-//     const updatedUser = await User.findByIdAndUpdate(
-//       _id,
-//       { name, avatar },
-//       {
-//         new: true,
-//         runValidators: true,
-//       }
-//     )
-
-//     if (!updatedUser) {
-//       const error = new Error('User is not found')
-//       error.statusCode = errorCode.NOT_FOUND
-//       throw error
-//     }
-//     res.send(updatedUser)
-//   } catch (err) {
-//     if (err.name === 'ValidationError') {
-//       res.status(errorCode.BAD_REQUEST).send({ message: 'Invalid data' })
-//     } else if (err.statusCode === errorCode.NOT_FOUND) {
-//       res.status(errorCode.NOT_FOUND).send({ message: err.message })
-//     } else {
-//       res
-//         .status(errorCode.SERVER_ERROR)
-//         .send({ message: 'Internal server error' })
-//     }
-//   }
-// }
+  try {
+    const upDateUser = await User.findByIdAndUpdate(
+      _id,
+      { name, avatar },
+      {
+        new: true,
+        runValidators: true,
+      }
+    ).orFail(() => {
+      throw new NotFoundError('User is not found')
+    })
+    res.send(upDateUser)
+  } catch (err) {
+    if (err.name === 'ValidationError') {
+      next(new BadRequestError('Invalid data'))
+    } else {
+      next(err)
+    }
+  }
+}
