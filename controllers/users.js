@@ -2,9 +2,13 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
 const { JWT_SECRET } = require('../utils/config')
+const BadRequestError = require('../utils/errors/BadRequestError')
+const UnauthorizedError = require('../utils/errors/UnauthorizedError')
+const NotFoundError = require('../utils/errors/NotFoundError')
+const ConflictError = require('../utils/errors/ConflictError')
 const errorCode = require('../utils/errorsCode')
 
-module.exports.createUser = async (req, res) => {
+module.exports.createUser = async (req, res, next) => {
   try {
     const { name, avatar, email, password } = req.body
     const hash = await bcrypt.hash(password, 10)
@@ -17,18 +21,40 @@ module.exports.createUser = async (req, res) => {
     })
   } catch (err) {
     if (err.name === 'ValidationError') {
-      res.status(errorCode.BAD_REQUEST).send({ message: 'Invalid data' })
+      next(new BadRequestError('Invalid data'))
     } else if (err.code === errorCode.DUPLICATE_ERROR) {
-      res
-        .status(errorCode.CONFLICT_DATA)
-        .send({ message: 'Email already exist' })
+      next(new ConflictError('Email already exist'))
     } else {
-      res
-        .status(errorCode.SERVER_ERROR)
-        .send({ message: 'Internal server error' })
+      next(new Error('Internal server error'))
     }
   }
 }
+
+// module.exports.createUser = async (req, res) => {
+//   try {
+//     const { name, avatar, email, password } = req.body
+//     const hash = await bcrypt.hash(password, 10)
+//     const user = await User.create({ name, avatar, email, password: hash })
+//     res.status(201).send({
+//       _id: user._id,
+//       name: user.name,
+//       avatar: user.avatar,
+//       email: user.email,
+//     })
+//   } catch (err) {
+//     if (err.name === 'ValidationError') {
+//       res.status(errorCode.BAD_REQUEST).send({ message: 'Invalid data' })
+//     } else if (err.code === errorCode.DUPLICATE_ERROR) {
+//       res
+//         .status(errorCode.CONFLICT_DATA)
+//         .send({ message: 'Email already exist' })
+//     } else {
+//       res
+//         .status(errorCode.SERVER_ERROR)
+//         .send({ message: 'Internal server error' })
+//     }
+//   }
+// }
 
 module.exports.login = async (req, res) => {
   const { email, password } = req.body
