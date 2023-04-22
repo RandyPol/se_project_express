@@ -62,37 +62,26 @@ module.exports.deleteClothingItem = async (req, res, next) => {
   }
 }
 
-
-// module.exports.likeItem = (req, res) => {
-//   const { itemId } = req.params
-//   const { _id } = req.user
-//   ClothingItem.findByIdAndUpdate(
-//     itemId,
-//     { $addToSet: { likes: _id } },
-//     { new: true }
-//   )
-//     .orFail(() => {
-//       const error = new Error('Clothing ID not found')
-//       error.statusCode = errorCode.NOT_FOUND
-//       throw error
-//     })
-//     .then((clothingItem) => {
-//       res.send(clothingItem)
-//     })
-//     .catch((err) => {
-//       if (err.name === 'CastError') {
-//         res
-//           .status(errorCode.BAD_REQUEST)
-//           .send({ message: 'Invalid clothes id' })
-//       } else if (err.statusCode === errorCode.NOT_FOUND) {
-//         res.status(errorCode.NOT_FOUND).send({ message: err.message })
-//       } else {
-//         res
-//           .status(errorCode.SERVER_ERROR)
-//           .send({ message: 'Internal server error' })
-//       }
-//     })
-// }
+module.exports.likeItem = async (req, res, next) => {
+  const { itemId } = req.params
+  const { _id } = req.user
+  try {
+    const clothingItem = await ClothingItem.findByIdAndUpdate(
+      itemId,
+      { $addToSet: { likes: _id } },
+      { new: true }
+    ).orFail(() => {
+      throw new NotFoundError('Clothing ID not found')
+    })
+    res.send(clothingItem)
+  } catch (err) {
+    if (err.name === 'CastError') {
+      next(new BadRequestError('Invalid clothes id'))
+    } else {
+      next(err)
+    }
+  }
+}
 
 // module.exports.dislikeItem = (req, res) => {
 //   const { itemId } = req.params
