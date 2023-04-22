@@ -4,6 +4,7 @@ const morgan = require('morgan')
 const rateLimit = require('express-rate-limit')
 const cors = require('cors')
 const helmet = require('helmet')
+const { errors } = require('celebrate')
 const routes = require('./routes')
 const errorHandler = require('./utils/errorHandler')
 
@@ -28,6 +29,9 @@ app.use(morgan('tiny'))
 
 // Use the routes
 app.use('/', routes)
+
+// Celebrate error handler
+app.use(errors())
 
 // Error handler
 app.use(errorHandler)
