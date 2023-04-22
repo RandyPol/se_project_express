@@ -5,6 +5,7 @@ const rateLimit = require('express-rate-limit')
 const cors = require('cors')
 const helmet = require('helmet')
 const routes = require('./routes')
+const errorHandler = require('./utils/errorHandler')
 
 const { PORT = 3001 } = process.env
 const app = express()
@@ -27,5 +28,8 @@ app.use(morgan('tiny'))
 
 // Use the routes
 app.use('/', routes)
+
+// Error handler
+app.use(errorHandler)
 
 app.listen(PORT)
