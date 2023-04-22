@@ -2,7 +2,6 @@ const ClothingItem = require('../models/clothingItem')
 const BadRequestError = require('../utils/errors/BadRequestError')
 const ForbiddenError = require('../utils/errors/ForbiddenError')
 const NotFoundError = require('../utils/errors/NotFoundError')
-const UnauthorizedError = require('../utils/errors/UnauthorizedError')
 
 module.exports.getClothingItems = async (req, res, next) => {
   try {
@@ -83,33 +82,23 @@ module.exports.likeItem = async (req, res, next) => {
   }
 }
 
-// module.exports.dislikeItem = (req, res) => {
-//   const { itemId } = req.params
-//   const { _id } = req.user
-//   ClothingItem.findByIdAndUpdate(
-//     itemId,
-//     { $pull: { likes: _id } },
-//     { new: true }
-//   )
-//     .orFail(() => {
-//       const error = new Error('Clothing ID not found')
-//       error.statusCode = errorCode.NOT_FOUND
-//       throw error
-//     })
-//     .then((clothingItem) => {
-//       res.send(clothingItem)
-//     })
-//     .catch((err) => {
-//       if (err.name === 'CastError') {
-//         res
-//           .status(errorCode.BAD_REQUEST)
-//           .send({ message: 'Invalid clothes id' })
-//       } else if (err.statusCode === errorCode.NOT_FOUND) {
-//         res.status(errorCode.NOT_FOUND).send({ message: err.message })
-//       } else {
-//         res
-//           .status(errorCode.SERVER_ERROR)
-//           .send({ message: 'Internal server error' })
-//       }
-//     })
-// }
+module.exports.dislikeItem = async (req, res, next) => {
+  const { itemId } = req.params
+  const { _id } = req.user
+  try {
+    const clothingItem = await ClothingItem.findByIdAndUpdate(
+      itemId,
+      { $pull: { likes: _id } },
+      { new: true }
+    ).orFail(() => {
+      throw new NotFoundError('Clothing ID not found')
+    })
+    res.send(clothingItem)
+  } catch (err) {
+    if (err.name === 'CastError') {
+      next(new BadRequestError('Invalid clothes id'))
+    } else {
+      next(err)
+    }
+  }
+}
