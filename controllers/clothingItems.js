@@ -33,43 +33,35 @@ module.exports.createClothingItem = async (req, res, next) => {
   }
 }
 
-// /**
-//  *
-//  * Below will be the controllers for individual clothing items functionality
-//  */
-// module.exports.deleteClothingItem = async (req, res) => {
-//   const { itemId } = req.params
-//   const { _id } = req.user
-//   try {
-//     const clothingItem = await ClothingItem.findById(itemId).orFail(() => {
-//       const error = new Error('Clothing ID not found')
-//       error.statusCode = errorCode.NOT_FOUND
-//       throw error
-//     })
+/**
+ *
+ * Below will be the controllers for individual clothing items functionality
+ */
 
-//     if (clothingItem.owner.toString() !== _id) {
-//       const error = new Error('Forbidden Action')
-//       error.statusCode = errorCode.FORBIDDEN_ERROR
-//       throw error
-//     }
+module.exports.deleteClothingItem = async (req, res, next) => {
+  const { itemId } = req.params
+  const { _id } = req.user
+  try {
+    const clothingItem = await ClothingItem.findById(itemId).orFail(() => {
+      throw new NotFoundError('Clothing ID not found')
+    })
 
-//     const deleteClothingItem = await ClothingItem.findByIdAndRemove(itemId)
+    if (clothingItem.owner.toString() !== _id) {
+      throw new ForbiddenError('Forbidden Action')
+    }
 
-//     res.status(200).send(deleteClothingItem)
-//   } catch (err) {
-//     if (err.name === 'CastError') {
-//       res.status(errorCode.BAD_REQUEST).send({ message: 'Invalid clothes id' })
-//     } else if (err.statusCode === errorCode.NOT_FOUND) {
-//       res.status(errorCode.NOT_FOUND).send({ message: err.message })
-//     } else if (err.statusCode === errorCode.FORBIDDEN_ERROR) {
-//       res.status(errorCode.FORBIDDEN_ERROR).send({ message: err.message })
-//     } else {
-//       res
-//         .status(errorCode.SERVER_ERROR)
-//         .send({ message: 'Internal server error' })
-//     }
-//   }
-// }
+    const deleteClothingItem = await ClothingItem.findByIdAndRemove(itemId)
+
+    res.status(200).send(deleteClothingItem)
+  } catch (err) {
+    if (err.name === 'CastError') {
+      next(new BadRequestError('Invalid clothes id'))
+    } else {
+      next(err)
+    }
+  }
+}
+
 
 // module.exports.likeItem = (req, res) => {
 //   const { itemId } = req.params
