@@ -52,3 +52,17 @@ module.exports.validateUserInfoBody = celebrate({
   }),
 })
 
+// Authentication when a user logs in
+
+module.exports.validateLoginBody = celebrate({
+  body: Joi.object().keys({
+    email: Joi.string().required().email().messages({
+      'string.empty': 'The "email" field must be filled in',
+      'string.email': 'The "email" field must be a valid email',
+    }),
+    password: Joi.string().required().min(9).messages({
+      'string.min': 'The minimum length of the "password" field is 9',
+      'string.empty': 'The "password" field must be filled in',
+    }),
+  }),
+})
