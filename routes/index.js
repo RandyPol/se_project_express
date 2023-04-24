@@ -6,9 +6,15 @@ const clothingItemRoutes = require('./clothingItems')
 const { createUser, login } = require('../controllers/users')
 const { auth } = require('../middlewares/auth')
 
+// Import the validation functions
+const {
+  validateUserInfoBody,
+  validateLoginBody,
+} = require('../middlewares/validation')
+
 // Sign up and sign in routes
-router.post('/signin', login)
-router.post('/signup', createUser)
+router.post('/signin', validateLoginBody, login)
+router.post('/signup', validateUserInfoBody, createUser)
 
 // Implement the routes
 router.use('/users', auth, userRoutes)
