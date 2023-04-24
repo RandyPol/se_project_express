@@ -9,3 +9,37 @@ This project is a fullstack application that provides clothing recommendations b
 - Clothing items displayed based on the current weather
 - Users can like and dislike clothing items
 - Rate limiting and logging of requests and errors
+
+## Installation
+
+1. Clone the repository:
+
+```bash
+git clone https://github.com/RandyPol/se_project_express.git
+```
+
+2. Install the required packages:
+
+```bash
+cd se_project_express
+npm install
+```
+
+3. Create a `.env` file in the root directory and set the required environment variables:
+
+```bash
+JWT_SECRET=Add your JWT secret here
+MONGODB_URI=mongodb://localhost:27017/weather_clothing_db
+```
+
+4. Start the server:
+
+```bash
+npm start
+```
+
+Or start the server in development mode with hot-reloading:
+
+```bash
+npm run dev
+```
