@@ -63,3 +63,17 @@ npm run dev
 - `/items/:itemId`: Delete a clothing item (delete)
 - `/items/:itemId/likes`: Like a clothing item (put)
 - `/items/:itemId/likes`: Dislike a clothing item (delete)
+
+## Accessing the Deployed Application
+
+You can access the deployed frontend application at https://www.weather2023.mooo.com/#/.
+
+To access the backend API, you can send requests to https://api.weather2023.mooo.com/items.
+
+For example, to get all clothing items:
+
+```bash
+curl https://api.weather2023.mooo.com/items
+```
+
+*Note that some endpoints may require authentication. In that case, you will need to include the `Bearer` token in the `Authorization` header.
