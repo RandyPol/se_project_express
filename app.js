@@ -32,6 +32,7 @@ app.use(morgan('tiny'))
 app.use(requestLogger)
 
 // Server crash testing only for code review process
+// This is not a part of the app and will be iliminated as soon as it passes the code review
 app.get('/crash-test', () => {
   setTimeout(() => {
     throw new Error('Server will crash now')
