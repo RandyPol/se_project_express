@@ -8,10 +8,12 @@ const {
 } = require('../controllers/clothingItems')
 const { auth } = require('../middlewares/auth')
 
+const { validateCardBody, validateId } = require('../middlewares/validation')
+
 router.get('/', getClothingItems)
-router.post('/', auth, createClothingItem)
-router.delete('/:itemId', auth, deleteClothingItem)
-router.put('/:itemId/likes', auth, likeItem)
-router.delete('/:itemId/likes', auth, dislikeItem)
+router.post('/', validateCardBody, auth, createClothingItem)
+router.delete('/:itemId', validateId, auth, deleteClothingItem)
+router.put('/:itemId/likes', validateId, auth, likeItem)
+router.delete('/:itemId/likes', validateId, auth, dislikeItem)
 
 module.exports = router
