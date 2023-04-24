@@ -31,6 +31,13 @@ app.use(morgan('tiny'))
 // Log all requests to the request.log file
 app.use(requestLogger)
 
+// Server crash testing only for code review process
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Server will crash now')
+  }, 0)
+})
+
 // Use the routes
 app.use('/', routes)
 
