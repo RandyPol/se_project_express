@@ -51,7 +51,7 @@ module.exports.deleteClothingItem = async (req, res, next) => {
 
     const deleteClothingItem = await ClothingItem.findByIdAndRemove(itemId)
 
-    res.status(200).send(deleteClothingItem)
+    res.send(deleteClothingItem)
   } catch (err) {
     if (err.name === 'CastError') {
       next(new BadRequestError('Invalid clothes id'))
