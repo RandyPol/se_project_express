@@ -1,10 +1,11 @@
-# WTWR (What to Wear?): Back End
+# Weather Clothing App
 
-The back-end project involves creating a server for the WTWR application. The project implements advanced techniques like working with databases, setting up security, testing, and deploying web applications on a remote machine. The end goal is to develop a fully functional server with an API and user authorization.
+This project is a fullstack application that provides clothing recommendations based on the current weather. The application is built using Node.js and Express for the backend API, and it uses MongoDB as the database. The frontend domain is accessible at https://www.weather2023.mooo.com/#/, and the backend API can be accessed at https://api.weather2023.mooo.com/items.
 
-To run the project, execute the following commands:
+## Features
 
-- `npm run start`: This command launches the server.
-- `npm run dev`: This command launches the server with the hot reload feature.
-
-By executing these commands, you can start using the server and its functionalities without having to learn the underlying concepts.
+- User authentication (login and signup)
+- CRUD operations on clothing items
+- Clothing items displayed based on the current weather
+- Users can like and dislike clothing items
+- Rate limiting and logging of requests and errors
