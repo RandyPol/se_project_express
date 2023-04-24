@@ -43,3 +43,23 @@ Or start the server in development mode with hot-reloading:
 ```bash
 npm run dev
 ```
+
+## API Endpoints
+
+### Authentication
+
+- `/signin`: Login an existing user (post)
+- `/signup`: Create a new user account (post)
+
+### User
+
+- `/users/me`: Get the current user's information (get)
+- `/users/me`: Update the current user's information (put)
+
+### Clothing Items
+
+- `/items`: Get all clothing items (get)
+- `/items`: Create a new clothing item (post)
+- `/items/:itemId`: Delete a clothing item (delete)
+- `/items/:itemId/likes`: Like a clothing item (put)
+- `/items/:itemId/likes`: Dislike a clothing item (delete)
