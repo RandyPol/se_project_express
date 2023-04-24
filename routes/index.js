@@ -1,10 +1,9 @@
 const router = require('express').Router()
-const { NOT_FOUND } = require('../utils/errorsCode')
-// Import the routes
 const userRoutes = require('./users')
 const clothingItemRoutes = require('./clothingItems')
 const { createUser, login } = require('../controllers/users')
 const { auth } = require('../middlewares/auth')
+const UnauthorizedError = require('../utils/errors/UnauthorizedError')
 
 // Import the validation functions
 const {
@@ -21,8 +20,8 @@ router.use('/users', auth, userRoutes)
 router.use('/items', clothingItemRoutes)
 
 // Non-existent resources
-router.use((req, res) => {
-  res.status(NOT_FOUND).json({ message: 'Requested resource not found' })
+router.use((req, res, next) => {
+  throw new UnauthorizedError('Requested resource not found')
 })
 
 module.exports = router
