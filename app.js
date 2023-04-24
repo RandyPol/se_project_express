@@ -14,6 +14,9 @@ const app = express()
 
 mongoose.connect('mongodb://localhost:27017/weather_clothing_db')
 
+// Log all requests to the request.log file
+app.use(requestLogger)
+
 app.use(helmet())
 app.use(limiter)
 app.use(express.json())
@@ -21,9 +24,6 @@ app.use(express.urlencoded({ extended: true }))
 app.use(cors())
 // Log all requests to the console
 app.use(morgan('tiny'))
-
-// Log all requests to the request.log file
-app.use(requestLogger)
 
 // Server crash testing only for code review process
 // This is not a part of the app and will be iliminated as soon as it passes the code review
