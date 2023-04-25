@@ -20,7 +20,7 @@ router.use('/users', auth, userRoutes)
 router.use('/items', clothingItemRoutes)
 
 // Non-existent resources
-router.use((req, res, next) => {
+router.use(() => {
   throw new NotFoundError('Requested resource not found')
 })
 
