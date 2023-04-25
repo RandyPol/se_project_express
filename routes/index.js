@@ -3,7 +3,7 @@ const userRoutes = require('./users')
 const clothingItemRoutes = require('./clothingItems')
 const { createUser, login } = require('../controllers/users')
 const { auth } = require('../middlewares/auth')
-const UnauthorizedError = require('../utils/errors/UnauthorizedError')
+const NotFoundError = require('../utils/errors/NotFoundError')
 
 // Import the validation functions
 const {
@@ -21,7 +21,7 @@ router.use('/items', clothingItemRoutes)
 
 // Non-existent resources
 router.use((req, res, next) => {
-  throw new UnauthorizedError('Requested resource not found')
+  throw new NotFoundError('Requested resource not found')
 })
 
 module.exports = router
