@@ -32,11 +32,6 @@ module.exports.createClothingItem = async (req, res, next) => {
   }
 }
 
-/**
- *
- * Below will be the controllers for individual clothing items functionality
- */
-
 module.exports.deleteClothingItem = async (req, res, next) => {
   const { itemId } = req.params
   const { _id } = req.user

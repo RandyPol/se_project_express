@@ -8,12 +8,6 @@ const validateURL = (value, helpers) => {
   return helpers.error('string.uri')
 }
 
-/**
- * Create validation functions from Joi schemas
- */
-
-// The clothing item body validation when an item is created
-
 module.exports.validateCardBody = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(30).messages({
@@ -29,7 +23,6 @@ module.exports.validateCardBody = celebrate({
   }),
 })
 
-// The user info body when a user is created
 
 module.exports.validateUserInfoBody = celebrate({
   body: Joi.object().keys({
@@ -67,7 +60,6 @@ module.exports.validateUserUpdateBody = celebrate({
   }),
 })
 
-// Authentication when a user logs in
 
 module.exports.validateLoginBody = celebrate({
   body: Joi.object().keys({
@@ -82,7 +74,6 @@ module.exports.validateLoginBody = celebrate({
   }),
 })
 
-// User and clothing item IDs when they are accessed
 
 module.exports.validateId = celebrate({
   params: Joi.object().keys({
